@@ -2,7 +2,6 @@
 
 El sector florícola de Ecuador es uno de los sectores con mayor produccion y exportacion a nivel mundial, este caso de estudio se basa en el analisis de este sector, el cual tratara de responder a:
 
-- ¿Qué países o mercados comparten comportamientos de compra idénticos?
 - ¿Cuánto volumen total de rosas (o flores de verano) demandará cada mercado en los próximos 6 a 12 meses?
 - ¿apartir de mi volumen de producciona ctual a que mercados deberia apuntar?
 
