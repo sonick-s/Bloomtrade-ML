@@ -40,6 +40,7 @@ def predicciones():
 # linkedin: URL completa (con tildes codificadas); se usa para el botón y el código QR.
 # foto: nombre del archivo en web/assets/ (o una URL completa); sin foto se muestran las iniciales.
 # foto_posicion: qué parte de la foto se ve en el círculo ("top", "center", "bottom"...).
+# color: color de su mitad de la pantalla ("azul" o "verde", definidos en pages/about.html).
 CREADORES = [
     {
         "nombre": "Omar Alexander Sani Satan",
@@ -49,6 +50,7 @@ CREADORES = [
         "linkedin": "https://www.linkedin.com/in/omar-sani-b9733a2b9/",
         "foto": "omarsani.png",
         "foto_posicion": "top",
+        "color": "azul",
     },
     {
         "nombre": "Víctor Javier Cárdenas Trujillo",
@@ -57,6 +59,7 @@ CREADORES = [
         "correo": "victorjcardenast@gmail.com",
         "linkedin": "https://www.linkedin.com/in/v%C3%ADctor-javier-c%C3%A1rdenas-trujillo-73593983",
         "foto": "victor image.jpg",
+        "color": "verde",
     },
 ]
 

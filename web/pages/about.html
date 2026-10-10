@@ -10,15 +10,22 @@
     pronostica la demanda de cada destino y recomienda a qué mercado vender cada lote.</p>
 </section>
 
+{# Colores disponibles para cada creador (campo "color" en CREADORES, web/routes.py) #}
+{% set temas = {
+  "azul":  {"fondo": "bg-blue-50",    "texto": "text-blue-700",    "avatar": "bg-blue-600"},
+  "verde": {"fondo": "bg-emerald-50", "texto": "text-emerald-700", "avatar": "bg-emerald-600"},
+} %}
+
 <!-- Pantalla dividida a la mitad: un creador a la izquierda y otro a la derecha -->
 <section class="grid md:grid-cols-2 rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
   {% for creador in creadores %}
     {% set lado_izquierdo = loop.first %}
+    {% set tema = temas[creador.get('color', 'azul')] %}
     {% set partes = creador.nombre.split() %}
     {# Teléfono de Ecuador en formato internacional para el enlace tel: (0983... -> +593983...) #}
     {% set telefono_int = '+593' ~ creador.telefono[1:] if creador.telefono.startswith('0') else creador.telefono %}
     <article class="flex flex-col items-center text-center px-8 py-12
-                    {{ 'bg-white' if lado_izquierdo else 'bg-brand-50' }}
+                    {{ tema.fondo }}
                     {{ 'md:border-r border-b md:border-b-0 border-slate-200' if lado_izquierdo }}">
       {% if creador.foto %}
         {% set foto = creador.foto if creador.foto.startswith('http') else url_for('web.assets', archivo=creador.foto) %}
@@ -28,13 +35,13 @@
              class="w-44 h-44 rounded-full object-cover {{ posicion }} ring-4 ring-white shadow-md">
       {% else %}
         <div class="w-44 h-44 rounded-full grid place-items-center text-5xl font-bold text-white shadow-md ring-4 ring-white
-                    {{ 'bg-brand-500' if lado_izquierdo else 'bg-slate-800' }}">
+                    {{ tema.avatar }}">
           {{ (partes[0][0] ~ (partes[2][0] if partes | length > 2 else partes[-1][0])) | upper }}
         </div>
       {% endif %}
 
       <h2 class="text-2xl font-bold mt-5">{{ creador.nombre }}</h2>
-      <p class="text-brand-600 font-medium mt-1">{{ creador.rol }}</p>
+      <p class="{{ tema.texto }} font-medium mt-1">{{ creador.rol }}</p>
 
       <div class="mt-8 w-full grid sm:grid-cols-2 gap-6 items-center">
         <!-- Izquierda: código QR del perfil de LinkedIn (se genera en el navegador) -->

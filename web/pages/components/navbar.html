@@ -4,19 +4,27 @@
   ("web.predicciones", "Predicciones"),
   ("web.about", "Acerca de"),
 ] %}
-<header class="bg-white border-b border-slate-200">
-  <div class="max-w-7xl mx-auto px-4 min-h-16 py-2 flex flex-wrap items-center justify-between gap-2">
-    <a href="{{ url_for('web.dashboard') }}" class="flex items-center gap-2">
-      <span class="w-8 h-8 rounded-lg bg-brand-500 text-white grid place-items-center font-bold">B</span>
-      <span class="font-semibold text-lg">Bloomtrade <span class="text-brand-500">ML</span></span>
+<!-- Barra flotante: queda fija arriba al hacer scroll, separada del borde y con esquinas redondeadas -->
+<header class="sticky top-4 z-50 px-4 pt-4">
+  <div class="max-w-7xl mx-auto rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-md shadow-lg shadow-slate-200/60
+              px-5 py-3 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] items-center gap-x-4 gap-y-2">
+    <!-- Izquierda: nombre -->
+    <a href="{{ url_for('web.dashboard') }}" class="font-semibold text-lg whitespace-nowrap">
+      Bloomtrade <span class="text-brand-500">ML</span>
     </a>
-    <nav class="flex flex-wrap items-center gap-1 text-sm">
+
+    <!-- Centro: menú (en móvil pasa a una segunda fila) -->
+    <nav class="col-span-2 md:col-span-1 order-3 md:order-none flex flex-wrap justify-center gap-1 text-sm">
       {% for endpoint, texto in enlaces %}
         <a href="{{ url_for(endpoint) }}"
-           class="nav-link {{ 'nav-link--active' if request.endpoint == endpoint }}">{{ texto }}</a>
+           class="nav-link whitespace-nowrap {{ 'nav-link--active' if request.endpoint == endpoint }}">{{ texto }}</a>
       {% endfor %}
-      <a href="/api/v1/docs" target="_blank" class="nav-link">API</a>
-      <span id="api-status" class="ml-2 status-pill status-pill--loading">API…</span>
     </nav>
+
+    <!-- Derecha: documentación de la API y estado de conexión -->
+    <div class="flex items-center justify-end gap-2 text-sm">
+      <a href="/api/v1/docs" target="_blank" class="nav-link">API</a>
+      <span id="api-status" class="status-pill status-pill--loading">API…</span>
+    </div>
   </div>
 </header>
