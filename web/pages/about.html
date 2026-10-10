@@ -1,0 +1,92 @@
+{% extends "index.html" %}
+
+{% block title %}Acerca de · Bloomtrade ML{% endblock %}
+
+{% block content %}
+<section class="text-center max-w-2xl mx-auto mb-8">
+  <span class="badge badge-brand">Acerca de</span>
+  <h1 class="text-3xl font-bold mt-3">Quiénes hicimos Bloomtrade ML</h1>
+  <p class="text-slate-500 mt-2">Un asistente de inteligencia de mercado para fincas florícolas de Ecuador:
+    pronostica la demanda de cada destino y recomienda a qué mercado vender cada lote.</p>
+</section>
+
+<!-- Pantalla dividida a la mitad: un creador a la izquierda y otro a la derecha -->
+<section class="grid md:grid-cols-2 rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+  {% for creador in creadores %}
+    {% set lado_izquierdo = loop.first %}
+    {% set partes = creador.nombre.split() %}
+    {# Teléfono de Ecuador en formato internacional para el enlace tel: (0983... -> +593983...) #}
+    {% set telefono_int = '+593' ~ creador.telefono[1:] if creador.telefono.startswith('0') else creador.telefono %}
+    <article class="flex flex-col items-center text-center px-8 py-12
+                    {{ 'bg-white' if lado_izquierdo else 'bg-brand-50' }}
+                    {{ 'md:border-r border-b md:border-b-0 border-slate-200' if lado_izquierdo }}">
+      {% if creador.foto %}
+        {% set foto = creador.foto if creador.foto.startswith('http') else url_for('web.assets', archivo=creador.foto) %}
+        {# Clase de Tailwind según foto_posicion: object-top, object-center, object-bottom... #}
+        {% set posicion = 'object-' ~ creador.get('foto_posicion', 'center') %}
+        <img src="{{ foto }}" alt="Foto de {{ creador.nombre }}"
+             class="w-28 h-28 rounded-full object-cover {{ posicion }} ring-4 ring-white shadow-md">
+      {% else %}
+        <div class="w-28 h-28 rounded-full grid place-items-center text-3xl font-bold text-white shadow-md ring-4 ring-white
+                    {{ 'bg-brand-500' if lado_izquierdo else 'bg-slate-800' }}">
+          {{ (partes[0][0] ~ (partes[2][0] if partes | length > 2 else partes[-1][0])) | upper }}
+        </div>
+      {% endif %}
+
+      <h2 class="text-2xl font-bold mt-5">{{ creador.nombre }}</h2>
+      <p class="text-brand-600 font-medium mt-1">{{ creador.rol }}</p>
+
+      <div class="mt-8 w-full grid sm:grid-cols-2 gap-6 items-center">
+        <!-- Izquierda: código QR del perfil de LinkedIn (se genera en el navegador) -->
+        <div class="flex flex-col items-center">
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="qr w-52 h-52" data-url="{{ creador.linkedin }}"
+                 role="img" aria-label="Código QR del LinkedIn de {{ creador.nombre }}"></div>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Escanea para ver el perfil</p>
+        </div>
+
+        <!-- Derecha: datos de contacto junto al botón de LinkedIn -->
+        <div class="flex flex-col items-center sm:items-start gap-3 text-sm text-slate-600 text-left">
+          <a href="tel:{{ telefono_int }}" class="inline-flex items-center gap-2 hover:text-brand-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.28 6.72 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.37c0-.52-.35-.97-.85-1.09l-4.42-1.1c-.44-.11-.9.05-1.17.41l-.97 1.29a1.13 1.13 0 0 1-1.21.38 12.04 12.04 0 0 1-7.14-7.14 1.13 1.13 0 0 1 .38-1.21l1.3-.97c.36-.27.52-.73.41-1.17l-1.1-4.42A1.13 1.13 0 0 0 6.61 2.25H5.25A3 3 0 0 0 2.25 4.5v2.25Z"/></svg>
+            {{ creador.telefono }}
+          </a>
+          <a href="mailto:{{ creador.correo }}" class="inline-flex items-center gap-2 hover:text-brand-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.24a2.25 2.25 0 0 1-1.07 1.92l-7.5 4.61a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.91V6.75"/></svg>
+            {{ creador.correo }}
+          </a>
+          <a href="{{ creador.linkedin }}" target="_blank" rel="noopener"
+             class="btn mt-2 bg-[#0a66c2] text-white hover:bg-[#004182]">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
+            Ver LinkedIn
+          </a>
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</section>
+
+<section class="mt-8 card">
+  <h2 class="card-title">Tecnologías</h2>
+  <div class="flex flex-wrap gap-2 mt-3 text-sm">
+    {% for tecnologia in ["Python", "Flask", "flask-smorest", "SQLAlchemy", "MariaDB / MySQL", "pandas", "numpy",
+                          "Regresión Ridge", "Tailwind CSS", "Plotly"] %}
+      <span class="chip cursor-default hover:border-slate-300">{{ tecnologia }}</span>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+  // Dibuja un QR (SVG) con la URL de cada perfil
+  document.querySelectorAll(".qr").forEach((contenedor) => {
+    const qr = qrcode(0, "M");
+    qr.addData(contenedor.dataset.url);
+    qr.make();
+    contenedor.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  });
+</script>
+{% endblock %}
