@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS pronosticos (
   pais_destino    VARCHAR(80) NOT NULL,
   periodo         DATE NOT NULL,
   volumen_kg_pred DECIMAL(14, 2) NOT NULL,
+  precio_usd_kg_pred DECIMAL(10, 2) NULL,
   limite_inf      DECIMAL(14, 2) NULL,
   limite_sup      DECIMAL(14, 2) NULL,
   created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

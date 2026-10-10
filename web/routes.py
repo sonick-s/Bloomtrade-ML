@@ -5,12 +5,22 @@ from flask import Blueprint, render_template
 web_bp = Blueprint(
     "web",
     __name__,
-    template_folder=".",  # raíz de web/: index.html aquí; el resto como "pages/..."
+    template_folder=".",  # raíz de web/: index.html es el layout; las páginas están en pages/
     static_folder="pages/js",
     static_url_path="/web/js",
 )
 
 
 @web_bp.route("/")
-def index():
-    return render_template("index.html")
+def dashboard():
+    return render_template("pages/dashboard.html")
+
+
+@web_bp.route("/modelos")
+def modelos():
+    return render_template("pages/model-uptodate.html")
+
+
+@web_bp.route("/predicciones")
+def predicciones():
+    return render_template("pages/predicciones.html")

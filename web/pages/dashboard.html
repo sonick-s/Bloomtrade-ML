@@ -1,0 +1,107 @@
+{% extends "index.html" %}
+
+{% block title %}Dashboard · Bloomtrade ML{% endblock %}
+
+{% block content %}
+<section class="flex flex-wrap items-end justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Inteligencia de mercado</h1>
+    <p id="subtitulo" class="text-slate-500 mt-1">Cargando…</p>
+  </div>
+  <div id="filtros" class="flex flex-wrap items-end gap-3 hidden">
+    <div>
+      <label class="label" for="f-flor">Flor</label>
+      <select id="f-flor" class="input min-w-40"></select>
+    </div>
+    <div>
+      <label class="label" for="f-mercado">Mercado</label>
+      <select id="f-mercado" class="input min-w-44"></select>
+    </div>
+    <div>
+      <span class="label">Mostrar</span>
+      <div class="flex gap-1">
+        <button type="button" data-metrica="volumen_kg" class="chip chip--active">Volumen</button>
+        <button type="button" data-metrica="valor_usd" class="chip">Valor FOB</button>
+      </div>
+    </div>
+    <button id="limpiar" type="button" class="btn btn-secondary">Limpiar filtros</button>
+  </div>
+</section>
+
+<div id="vacio" class="hidden"></div>
+
+<div id="contenido" class="hidden space-y-6">
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card"><p class="kpi-label">Volumen esperado 12 m</p><p id="k-vol" class="kpi-value">–</p><p id="k-vol-var" class="kpi-hint"></p></div>
+    <div class="card"><p class="kpi-label">Valor FOB esperado</p><p id="k-valor" class="kpi-value">–</p><p class="kpi-hint">volumen × precio pronosticado</p></div>
+    <div class="card"><p class="kpi-label">Precio esperado</p><p id="k-precio" class="kpi-value">–</p><p class="kpi-hint">USD por kg, promedio ponderado</p></div>
+    <div class="card"><p class="kpi-label">Mes de mayor demanda</p><p id="k-pico" class="kpi-value">–</p><p id="k-pico-hint" class="kpi-hint"></p></div>
+    <div class="card"><p class="kpi-label">Confiabilidad</p><p id="k-conf" class="kpi-value">–</p><p id="k-conf-hint" class="kpi-hint"></p></div>
+  </div>
+
+  <section class="card">
+    <div class="flex flex-wrap justify-between gap-2 mb-2">
+      <div>
+        <h2 class="card-title">Histórico y pronóstico</h2>
+        <p id="t-serie" class="card-subtitle"></p>
+      </div>
+      <p class="text-xs text-slate-400 self-end">La banda muestra el rango de error esperado del modelo</p>
+    </div>
+    <div id="g-serie" class="h-96"></div>
+  </section>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <section class="card lg:col-span-2">
+      <h2 class="card-title">Mercados</h2>
+      <p class="card-subtitle">Próximos 12 meses · haz clic en una barra para filtrar</p>
+      <div id="g-mercados" class="h-80"></div>
+    </section>
+    <section class="card">
+      <h2 class="card-title">Flores</h2>
+      <p class="card-subtitle">Haz clic en una porción para filtrar</p>
+      <div id="g-flores" class="h-80"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2 class="card-title">Temporadas por mercado</h2>
+    <p class="card-subtitle">Pronóstico mensual: los colores más intensos son los meses pico</p>
+    <div id="g-calor" class="h-80"></div>
+  </section>
+
+  <section class="card">
+    <h2 class="card-title">Comparativo de mercados</h2>
+    <p class="card-subtitle">Haz clic en una fila para ver ese mercado</p>
+    <div class="overflow-x-auto mt-3">
+      <table class="tabla">
+        <thead><tr><th>Mercado</th><th class="num">Volumen 12 m</th><th class="num">vs últimos 12 m</th>
+          <th class="num">Precio/kg</th><th class="num">Valor FOB</th><th>Mes pico</th><th>Confiabilidad</th></tr></thead>
+        <tbody id="t-mercados"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="flex flex-wrap justify-between gap-2">
+      <div>
+        <h2 class="card-title">Modelo activo</h2>
+        <p id="m-info" class="card-subtitle"></p>
+      </div>
+      <a href="{{ url_for('web.modelos') }}" class="btn btn-secondary self-start">Gestionar modelos</a>
+    </div>
+    <div class="overflow-x-auto mt-3">
+      <table class="tabla max-w-2xl">
+        <thead><tr><th>Nivel de detalle</th><th class="num">Error del modelo</th><th class="num">Error línea base</th><th></th></tr></thead>
+        <tbody id="t-modelo"></tbody>
+      </table>
+    </div>
+    <p class="text-xs text-slate-400 mt-2">Error medido (WAPE) en el último año de datos, que el modelo no vio al entrenar.
+      Línea base: "cada mes se vende lo mismo que el mismo mes del año anterior".</p>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script src="{{ url_for('web.static', filename='dashboard.js') }}"></script>
+{% endblock %}

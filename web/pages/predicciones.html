@@ -1,0 +1,92 @@
+{% extends "index.html" %}
+
+{% block title %}Predicciones · Bloomtrade ML{% endblock %}
+
+{% block content %}
+<section class="mb-6">
+  <h1 class="text-2xl font-bold">Planificador de ventas</h1>
+  <p class="text-slate-500 mt-1">Cruza el inventario de tu finca con el pronóstico del mercado para decidir a dónde vender cada lote.</p>
+</section>
+
+<div class="grid lg:grid-cols-3 gap-6 mb-6">
+  <section class="card">
+    <h2 class="card-title">Cargar inventario</h2>
+    <p class="card-subtitle">CSV con Tipo_Flor, Stock_Kg, Fecha_Cosecha, Fecha_Salida_Desde y Fecha_Salida_Hasta.</p>
+    <div class="mt-4 space-y-3">
+      <input id="nombre" class="input" placeholder="Nombre, ej: Inventario octubre 2026">
+      <label for="archivo" id="dropzone" class="dropzone py-6">
+        <span id="archivo-texto" class="font-medium text-sm">Arrastra el CSV aquí o haz clic</span>
+        <input id="archivo" type="file" accept=".csv" class="hidden">
+      </label>
+      <button id="subir" class="btn btn-primary w-full" disabled>Cargar inventario</button>
+      <div id="carga-msg"></div>
+    </div>
+  </section>
+
+  <section class="card lg:col-span-2">
+    <h2 class="card-title">Analizar</h2>
+    <p class="card-subtitle">Elige un inventario cargado. Se usa el pronóstico del modelo activo.</p>
+    <div class="flex flex-wrap items-end gap-3 mt-4">
+      <div class="flex-1 min-w-60">
+        <label class="label" for="dataset">Inventario</label>
+        <select id="dataset" class="input"><option value="">Cargando…</option></select>
+      </div>
+      <button id="analizar" class="btn btn-primary">Optimizar asignación de mercado</button>
+    </div>
+    <div class="text-xs text-slate-500 mt-4 grid sm:grid-cols-3 gap-3">
+      <p><strong class="text-slate-700">Descarta</strong> mercados con tránsito que deja menos de 7 días de vida útil o con precio esperado menor a tu mínimo.</p>
+      <p><strong class="text-slate-700">Puntúa</strong> cada mercado: 60% precio esperado + 40% demanda esperada en tu ventana de salida.</p>
+      <p><strong class="text-slate-700">Reparte</strong> el stock entre los 3 mejores, en proporción a su puntaje.</p>
+    </div>
+    <div id="analisis-msg" class="mt-3"></div>
+  </section>
+</div>
+
+<div id="resultados" class="hidden space-y-6">
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card"><p class="kpi-label">Lotes analizados</p><p id="k-lotes" class="kpi-value">–</p><p id="k-lotes-hint" class="kpi-hint"></p></div>
+    <div class="card"><p class="kpi-label">Kilos asignados</p><p id="k-kg" class="kpi-value">–</p><p id="k-kg-hint" class="kpi-hint"></p></div>
+    <div class="card"><p class="kpi-label">Ingreso esperado</p><p id="k-ingreso" class="kpi-value">–</p><p class="kpi-hint">kg × precio FOB esperado</p></div>
+    <div class="card"><p class="kpi-label">Margen esperado</p><p id="k-margen" class="kpi-value">–</p><p class="kpi-hint">ingreso − costo de producción</p></div>
+    <div class="card"><p class="kpi-label">Precio promedio</p><p id="k-precio" class="kpi-value">–</p><p class="kpi-hint">USD por kg vendido</p></div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <section class="card">
+      <h2 class="card-title">Distribución por mercado</h2>
+      <p class="card-subtitle">Kilos e ingreso esperados · clic en una barra para filtrar los lotes</p>
+      <div id="g-mercados" class="h-80"></div>
+    </section>
+    <section class="card">
+      <h2 class="card-title">Calendario de salidas</h2>
+      <p class="card-subtitle">Kilos asignados por mes y mercado</p>
+      <div id="g-calendario" class="h-80"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 class="card-title">Plan por lote</h2>
+        <p id="plan-sub" class="card-subtitle"></p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <input id="buscar" class="input w-48" placeholder="Buscar lote o variedad">
+        <select id="f-flor" class="input w-44"></select>
+        <select id="f-estado" class="input w-48">
+          <option value="">Todos los estados</option>
+          <option value="ok">Con recomendación</option>
+          <option value="sin_mercado">Sin mercado viable</option>
+          <option value="fuera_de_horizonte">Fuera del pronóstico</option>
+        </select>
+      </div>
+    </div>
+    <div id="lotes" class="mt-4 space-y-3"></div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script src="{{ url_for('web.static', filename='predicciones.js') }}"></script>
+{% endblock %}

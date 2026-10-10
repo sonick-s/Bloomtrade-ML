@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bloomtrade ML</title>
+  <title>{% block title %}Bloomtrade ML{% endblock %}</title>
 
-  <!-- Tailwind CSS (CDN). Todos los estilos se gestionan desde este archivo. -->
+  <!-- Tailwind CSS (CDN). Los estilos de toda la app se gestionan desde este archivo. -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,12 +25,42 @@
     /* Componentes reutilizables */
     @layer components {
       .card { @apply bg-white border border-slate-200 rounded-2xl p-5 shadow-sm; }
-      .card-title { @apply font-semibold mb-3; }
+      .card-title { @apply font-semibold text-slate-800; }
+      .card-subtitle { @apply text-sm text-slate-500 mt-0.5; }
       .kpi-label { @apply text-xs text-slate-500; }
       .kpi-value { @apply text-2xl font-bold mt-1 tabular-nums; }
+      .kpi-hint { @apply text-xs text-slate-400 mt-1; }
 
       .nav-link { @apply px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100; }
       .nav-link--active { @apply bg-brand-50 text-brand-600 font-medium; }
+
+      .btn { @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+                    transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+      .btn-primary { @apply bg-brand-500 text-white hover:bg-brand-600; }
+      .btn-secondary { @apply bg-white border border-slate-300 text-slate-700 hover:bg-slate-50; }
+      .btn-sm { @apply px-2.5 py-1 text-xs; }
+      .input { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-500; }
+      .label { @apply block text-xs font-medium text-slate-600 mb-1; }
+
+      .tabla { @apply w-full text-sm; }
+      .tabla th { @apply text-left text-xs font-semibold uppercase tracking-wide text-slate-500 px-3 py-2
+                         border-b border-slate-200 whitespace-nowrap; }
+      .tabla td { @apply px-3 py-2.5 border-b border-slate-100 whitespace-nowrap; }
+      .tabla tr:hover td { @apply bg-slate-50; }
+      .num { @apply text-right tabular-nums; }
+
+      .badge { @apply inline-flex items-center text-xs px-2 py-0.5 rounded-full font-medium; }
+      .badge-ok { @apply bg-emerald-100 text-emerald-700; }
+      .badge-warn { @apply bg-amber-100 text-amber-700; }
+      .badge-error { @apply bg-rose-100 text-rose-700; }
+      .badge-neutral { @apply bg-slate-100 text-slate-600; }
+      .badge-brand { @apply bg-brand-50 text-brand-600; }
+
+      .alert { @apply rounded-xl px-4 py-3 text-sm border; }
+      .alert-ok { @apply bg-emerald-50 border-emerald-200 text-emerald-800; }
+      .alert-error { @apply bg-rose-50 border-rose-200 text-rose-800; }
+      .alert-info { @apply bg-slate-50 border-slate-200 text-slate-700; }
 
       .status-pill { @apply text-xs px-2.5 py-1 rounded-full font-medium; }
       .status-pill--loading { @apply bg-slate-100 text-slate-500; }
@@ -39,79 +69,28 @@
       .status-pill--error { @apply bg-rose-100 text-rose-700; }
 
       .dropzone {
-        @apply flex flex-col items-center gap-2 py-10 px-4 border-2 border-dashed border-slate-300
+        @apply flex flex-col items-center gap-2 py-8 px-4 border-2 border-dashed border-slate-300
                rounded-2xl text-center cursor-pointer transition-colors
                hover:border-brand-500 hover:bg-brand-50;
       }
       .dropzone--over { @apply border-brand-500 bg-brand-50; }
+      .chip { @apply px-3 py-1.5 rounded-full border border-slate-300 text-sm cursor-pointer hover:border-brand-500; }
+      .chip--active { @apply bg-brand-500 border-brand-500 text-white; }
     }
   </style>
+  {% block head %}{% endblock %}
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
-  <header class="bg-white border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2">
-        <span class="w-8 h-8 rounded-lg bg-brand-500 text-white grid place-items-center font-bold">B</span>
-        <span class="font-semibold text-lg">Bloomtrade <span class="text-brand-500">ML</span></span>
-      </a>
-      <nav class="flex items-center gap-1 text-sm">
-        <a href="/" class="nav-link nav-link--active">Dashboard</a>
-        <a href="/api/v1/docs" target="_blank" class="nav-link">API</a>
-        <span id="api-status" class="ml-3 status-pill status-pill--loading">API…</span>
-      </nav>
-    </div>
-  </header>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+  {% include "pages/components/navbar.html" %}
 
-  <main class="max-w-7xl mx-auto px-4 py-8">
-    <section class="mb-8">
-      <h1 class="text-2xl font-bold">Inteligencia de mercado florícola</h1>
-      <p class="text-slate-500 mt-1">Carga un CSV de exportaciones para explorar volumen, destinos y temporadas.</p>
-    </section>
-
-    <!-- Carga del archivo -->
-    <section class="card mb-8">
-      <label for="csv-input" id="dropzone" class="dropzone">
-        <svg class="w-10 h-10 text-brand-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
-        </svg>
-        <span class="font-medium">Arrastra tu CSV aquí o haz clic para elegirlo</span>
-        <span class="text-sm text-slate-500">Columnas: Fecha_Despacho, Tipo_Flor, Pais_Destino, Volumen_Kg, Valor_FOB_USD</span>
-        <input id="csv-input" type="file" accept=".csv" class="hidden">
-      </label>
-      <p id="file-info" class="text-sm text-slate-500 mt-3 hidden"></p>
-      <p id="file-error" class="text-sm text-brand-600 mt-3 hidden"></p>
-    </section>
-
-    <!-- Resultados -->
-    <section id="results" class="hidden">
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="card"><p class="kpi-label">Registros</p><p id="kpi-rows" class="kpi-value">–</p></div>
-        <div class="card"><p class="kpi-label">Volumen total</p><p id="kpi-kg" class="kpi-value">–</p></div>
-        <div class="card"><p class="kpi-label">Valor FOB</p><p id="kpi-fob" class="kpi-value">–</p></div>
-        <div class="card"><p class="kpi-label">Precio promedio / kg</p><p id="kpi-price" class="kpi-value">–</p></div>
-      </div>
-
-      <div class="grid lg:grid-cols-3 gap-4 mb-8">
-        <div class="card lg:col-span-2">
-          <h2 class="card-title">Volumen mensual (kg)</h2>
-          <div id="chart-monthly" class="h-80"></div>
-        </div>
-        <div class="card">
-          <h2 class="card-title">Participación por flor</h2>
-          <div id="chart-flowers" class="h-80"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2 class="card-title">Top destinos por valor FOB</h2>
-        <div id="chart-countries" class="h-96"></div>
-      </div>
-    </section>
+  <main class="max-w-7xl w-full mx-auto px-4 py-8 flex-1">
+    {% block content %}{% endblock %}
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.2/plotly.min.js"></script>
+  {% include "pages/components/footer.html" %}
+
   <script src="{{ url_for('web.static', filename='api.js') }}"></script>
-  <script src="{{ url_for('web.static', filename='dashboard.js') }}"></script>
+  <script src="{{ url_for('web.static', filename='ui.js') }}"></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

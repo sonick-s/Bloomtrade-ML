@@ -6,3 +6,4 @@ python-dotenv==1.0.1
 gunicorn==22.0.0
 PyMySQL==1.1.1
 pandas==3.0.6
+numpy==2.5.3

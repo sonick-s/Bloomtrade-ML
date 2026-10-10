@@ -1,0 +1,21 @@
+{% set enlaces = [
+  ("web.dashboard", "Dashboard"),
+  ("web.modelos", "Modelos"),
+  ("web.predicciones", "Predicciones"),
+] %}
+<header class="bg-white border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-4 min-h-16 py-2 flex flex-wrap items-center justify-between gap-2">
+    <a href="{{ url_for('web.dashboard') }}" class="flex items-center gap-2">
+      <span class="w-8 h-8 rounded-lg bg-brand-500 text-white grid place-items-center font-bold">B</span>
+      <span class="font-semibold text-lg">Bloomtrade <span class="text-brand-500">ML</span></span>
+    </a>
+    <nav class="flex flex-wrap items-center gap-1 text-sm">
+      {% for endpoint, texto in enlaces %}
+        <a href="{{ url_for(endpoint) }}"
+           class="nav-link {{ 'nav-link--active' if request.endpoint == endpoint }}">{{ texto }}</a>
+      {% endfor %}
+      <a href="/api/v1/docs" target="_blank" class="nav-link">API</a>
+      <span id="api-status" class="ml-2 status-pill status-pill--loading">API…</span>
+    </nav>
+  </div>
+</header>

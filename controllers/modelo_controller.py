@@ -1,6 +1,7 @@
 from controllers.crud import crud_blueprint
+from services.entrenamiento_service import entrenar_modelo
 from services.modelo_service import modelo_service
-from views.modelo_schema import ModeloPageSchema, ModeloQuerySchema, ModeloSchema
+from views.modelo_schema import EntrenamientoSchema, EntrenarSchema, ModeloPageSchema, ModeloQuerySchema, ModeloSchema
 
 blp = crud_blueprint(
     name="modelos",
@@ -25,3 +26,11 @@ def get_active():
 def activate(entity_id):
     """Activa este modelo y desactiva el anterior"""
     return modelo_service.activate(entity_id)
+
+
+@blp.route("/entrenar", methods=["POST"])
+@blp.arguments(EntrenarSchema)
+@blp.response(201, EntrenamientoSchema)
+def train(datos):
+    """Entrena una versión nueva con los datasets de mercado, guarda sus pronósticos y la activa si mejora"""
+    return entrenar_modelo(**datos)

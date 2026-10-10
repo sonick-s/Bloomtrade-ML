@@ -11,6 +11,7 @@ class PronosticoSchema(TimestampSchema):
     pais_destino = fields.String(required=True, validate=validate.Length(min=1, max=80))
     periodo = fields.Date(required=True)
     volumen_kg_pred = fields.Float(required=True, validate=POSITIVO)
+    precio_usd_kg_pred = fields.Float(allow_none=True, validate=POSITIVO)
     limite_inf = fields.Float(allow_none=True, validate=POSITIVO)
     limite_sup = fields.Float(allow_none=True, validate=POSITIVO)
 

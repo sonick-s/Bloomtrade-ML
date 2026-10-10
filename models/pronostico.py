@@ -15,5 +15,6 @@ class Pronostico(BaseModel):
     pais_destino = db.Column(db.String(80), nullable=False)
     periodo = db.Column(db.Date, nullable=False)
     volumen_kg_pred = db.Column(db.Numeric(14, 2), nullable=False)
+    precio_usd_kg_pred = db.Column(db.Numeric(10, 2))
     limite_inf = db.Column(db.Numeric(14, 2))
     limite_sup = db.Column(db.Numeric(14, 2))

@@ -28,7 +28,9 @@ python app.py
 
 | Ruta | Qué muestra |
 |---|---|
-| http://127.0.0.1:5000/ | Frontend (dashboard) |
+| http://127.0.0.1:5000/ | Dashboard global: pronóstico por flor y mercado (interactivo) |
+| http://127.0.0.1:5000/modelos | Carga de CSV de mercado, entrenamiento y versiones del modelo |
+| http://127.0.0.1:5000/predicciones | Carga del inventario de la finca y plan de ventas por lote |
 | http://127.0.0.1:5000/api/v1/docs | Documentación Swagger de la API |
 
 El frontend vive en la carpeta `web/`, separado de la API:
@@ -36,8 +38,21 @@ El frontend vive en la carpeta `web/`, separado de la API:
 ```
 web/
 ├── routes.py          # rutas de las páginas HTML
-├── index.html         # página principal (Tailwind por CDN y estilos incluidos)
+├── index.html         # layout común (Tailwind por CDN, estilos, navbar y footer)
 └── pages/
-    ├── components/    # piezas reutilizables (navbar, footer)
-    └── js/            # lógica de la página y llamadas a la API
+    ├── dashboard.html, model-uptodate.html, predicciones.html
+    ├── components/    # navbar.html, footer.html
+    └── js/            # api.js, ui.js y la lógica de cada página
 ```
+
+## 4. Flujo de uso
+
+1. **Modelos** → carga un CSV de exportaciones (ej. `docs/exportaciones_ecuador_flores.csv`) y entrena.
+   El modelo nuevo se activa solo si tiene menor error que el activo; también se puede activar a mano.
+2. **Predicciones** → carga el inventario de la finca (ej. `docs/inventario_finca.csv`) y obtén el
+   reparto recomendado de cada lote por mercado.
+3. **Dashboard** → explora el pronóstico del modelo activo por flor y mercado.
+
+La lógica de Machine Learning está en `ml/` (sin dependencias de Flask) y los modelos entrenados se
+guardan en `ml/artifacts/` (fuera de git). Datos de ejemplo: `scripts/generate_ecuador_exports.py` y
+`scripts/generate_inventario_finca.py`.

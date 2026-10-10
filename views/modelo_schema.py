@@ -1,4 +1,4 @@
-from marshmallow import fields, validate
+from marshmallow import Schema, fields, validate
 
 from views.common_schema import PaginationQuerySchema, TimestampSchema, page_schema
 
@@ -20,3 +20,15 @@ class ModeloQuerySchema(PaginationQuerySchema):
 
 
 ModeloPageSchema = page_schema(ModeloSchema, "ModeloPage")
+
+
+class EntrenarSchema(Schema):
+    dataset_ids = fields.List(fields.Integer(), load_default=list,
+                              metadata={"description": "Datasets de mercado; vacío = todos los validados"})
+    activar_si_mejora = fields.Boolean(load_default=True)
+
+
+class EntrenamientoSchema(Schema):
+    modelo = fields.Nested(ModeloSchema)
+    activado = fields.Boolean()
+    mensaje = fields.String()

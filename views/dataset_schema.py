@@ -1,3 +1,4 @@
+from flask_smorest.fields import Upload
 from marshmallow import Schema, fields, validate
 
 from models import Dataset
@@ -24,3 +25,13 @@ class DatasetQuerySchema(PaginationQuerySchema):
 
 
 DatasetPageSchema = page_schema(DatasetSchema, "DatasetPage")
+
+
+class DatasetArchivoSchema(Schema):
+    archivo = Upload(required=True, metadata={"description": "CSV a cargar"})
+
+
+class DatasetCargaSchema(Schema):
+    nombre = fields.String(required=True, validate=validate.Length(min=1, max=150))
+    tipo = fields.String(required=True, validate=validate.OneOf(Dataset.TIPOS))
+    origen = fields.String(load_default="usuario", validate=validate.OneOf(Dataset.ORIGENES))

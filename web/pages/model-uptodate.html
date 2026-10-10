@@ -1,0 +1,90 @@
+{% extends "index.html" %}
+
+{% block title %}Modelos · Bloomtrade ML{% endblock %}
+
+{% block content %}
+<section class="mb-6">
+  <h1 class="text-2xl font-bold">Modelos de pronóstico</h1>
+  <p class="text-slate-500 mt-1">Carga datos de mercado, entrena una versión nueva y decide cuál queda activa.</p>
+</section>
+
+<ol class="grid md:grid-cols-3 gap-3 mb-6 text-sm">
+  <li class="card py-3"><span class="badge badge-brand mr-1">1</span> Carga uno o más CSV de exportaciones</li>
+  <li class="card py-3"><span class="badge badge-brand mr-1">2</span> Elige con qué datasets entrenar</li>
+  <li class="card py-3"><span class="badge badge-brand mr-1">3</span> Entrena: si mejora al activo, lo reemplaza</li>
+</ol>
+
+<div class="grid lg:grid-cols-5 gap-6 mb-6">
+  <!-- 1. Carga -->
+  <section class="card lg:col-span-2">
+    <h2 class="card-title">1 · Cargar datos de mercado</h2>
+    <p class="card-subtitle">CSV con Fecha_Despacho, Tipo_Flor, Pais_Destino, Volumen_Kg y Valor_FOB_USD.</p>
+    <div class="mt-4 space-y-3">
+      <div>
+        <label class="label" for="nombre">Nombre del dataset</label>
+        <input id="nombre" class="input" placeholder="Ej: Exportaciones BCE 2018-2026">
+      </div>
+      <label for="archivo" id="dropzone" class="dropzone">
+        <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+        </svg>
+        <span id="archivo-texto" class="font-medium text-sm">Arrastra el CSV aquí o haz clic para elegirlo</span>
+        <input id="archivo" type="file" accept=".csv" class="hidden">
+      </label>
+      <button id="subir" class="btn btn-primary w-full" disabled>Cargar a la base de datos</button>
+      <div id="carga-msg"></div>
+    </div>
+  </section>
+
+  <!-- 2 y 3. Datasets y entrenamiento -->
+  <section class="card lg:col-span-3">
+    <div class="flex flex-wrap justify-between gap-2">
+      <div>
+        <h2 class="card-title">2 · Datasets de mercado</h2>
+        <p class="card-subtitle">Marca los que quieres usar para entrenar.</p>
+      </div>
+      <button id="recargar" class="btn btn-secondary btn-sm self-start">Actualizar</button>
+    </div>
+    <div class="overflow-x-auto mt-3">
+      <table class="tabla">
+        <thead><tr><th></th><th>Dataset</th><th class="num">Filas</th><th>Periodo</th><th>Estado</th><th>Cargado</th><th></th></tr></thead>
+        <tbody id="t-datasets"><tr><td colspan="7" class="text-slate-400">Cargando…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="border-t border-slate-200 mt-5 pt-5">
+      <h2 class="card-title">3 · Entrenar</h2>
+      <div class="flex flex-wrap items-center gap-4 mt-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input id="activar" type="checkbox" class="accent-brand-500 w-4 h-4" checked>
+          Activar automáticamente si mejora al modelo activo
+        </label>
+        <button id="entrenar" class="btn btn-primary ml-auto">Entrenar con los seleccionados</button>
+      </div>
+      <p class="text-xs text-slate-400 mt-2">El entrenamiento valida con el último año de datos, guarda la versión y sus
+        pronósticos de 12 meses. Tarda unos segundos.</p>
+      <div id="entreno-msg" class="mt-3"></div>
+      <div id="entreno-detalle"></div>
+    </div>
+  </section>
+</div>
+
+<!-- 4. Versiones -->
+<section class="card">
+  <h2 class="card-title">4 · Versiones del modelo</h2>
+  <p class="card-subtitle">Error medido en el último año de cada entrenamiento. Solo una versión puede estar activa.</p>
+  <div class="overflow-x-auto mt-3">
+    <table class="tabla">
+      <thead><tr><th>Versión</th><th>Entrenado</th><th class="num">Registros</th><th>Mercados</th>
+        <th class="num">Error flor×mercado×mes</th><th class="num">Error total mensual</th><th class="num">Error precio</th>
+        <th>Estado</th><th></th></tr></thead>
+      <tbody id="t-modelos"><tr><td colspan="9" class="text-slate-400">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+  <div id="modelos-msg" class="mt-3"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('web.static', filename='modelos.js') }}"></script>
+{% endblock %}
