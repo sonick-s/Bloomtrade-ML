@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.engine import URL
 
 load_dotenv()
 
@@ -9,12 +10,16 @@ db = SQLAlchemy()
 
 
 def _database_uri():
-    user = os.getenv("DB_USER", "root")
-    password = os.getenv("DB_PASSWORD", "")
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "3306")
-    name = os.getenv("DB_NAME", "saturday_ia")
-    return f"mysql+pymysql://{user}:{password}@{host}:{port}/{name}?charset=utf8mb4"
+    # URL.create escapa caracteres especiales (@, :, /, #...) de usuario y contraseña
+    return URL.create(
+        drivername="mysql+pymysql",
+        username=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        database=os.getenv("DB_NAME"),
+        query={"charset": "utf8mb4"},
+    )
 
 
 def init_db(app):
