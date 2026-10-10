@@ -102,7 +102,7 @@ function renderSerie(pron, hist) {
   const xpUnida = [xh.at(-1), ...xp];
   const ypUnida = [h.get(xh.at(-1)), ...xp.map((x) => p.get(x))];
 
-  const etiqueta = [estado.flor || "Todas las flores", estado.mercado || "todos los mercados"].join(" · ");
+  const etiqueta = `Ecuador → ${estado.mercado || "todos los destinos"} · ${estado.flor || "todas las flores"}`;
   $("t-serie").textContent = `${etiqueta} · ${NOMBRE_METRICA[estado.metrica]}`;
   const unidad = estado.metrica === "valor_usd" ? "$%{y:,.0f}" : "%{y:,.0f} kg";
   const hover = `%{x|%b %Y}<br>${unidad}<extra>%{fullData.name}</extra>`;
@@ -280,7 +280,7 @@ async function iniciar() {
   $("subtitulo").textContent = `Modelo v${m.version} · ${fmt.num(d.registros_mercado)} registros de mercado · `
     + `${d.lotes_inventario} lotes en inventario (${fmt.t(d.stock_kg)})`;
   llenarSelect($("f-flor"), m.flores, "Todas las flores");
-  llenarSelect($("f-mercado"), m.mercados, "Todos los mercados");
+  llenarSelect($("f-mercado"), m.mercados, "Ecuador → todos los destinos");
   $("filtros").classList.remove("hidden");
   $("contenido").classList.remove("hidden");
   renderModelo();
