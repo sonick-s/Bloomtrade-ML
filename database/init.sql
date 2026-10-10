@@ -4,12 +4,6 @@
 -- El nombre de la base debe coincidir con DB_NAME del .env
 -- =============================================================================
 
-CREATE DATABASE IF NOT EXISTS saturday_ia
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE saturday_ia;
-
 -- -----------------------------------------------------------------------------
 -- datasets: cada CSV cargado, versionado
 --   tipo = 'mercado' -> sus filas van a exportaciones y se usan para entrenar
