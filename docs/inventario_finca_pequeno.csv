@@ -1,0 +1,11 @@
+﻿Codigo_Lote,Bloque,Tipo_Flor,Variedad,Color,Grado_Calidad,Longitud_Tallo_Cm,Stock_Tallos,Stock_Kg,Estado,Fecha_Cosecha,Fecha_Salida_Desde,Fecha_Salida_Hasta,Vida_Util_Dias,Costo_Produccion_Usd_Kg,Precio_Minimo_Usd_Kg,Observaciones
+L-2610-901,B06,Rosas,Pink Floyd,Rosado,Premium,60,26000,1088.7,despachado,2026-10-14,2026-10-16,2026-11-05,13,4.2,5.81,Ya despachado: se ignora
+L-2610-902,B11,Rosas,Pink Floyd,Naranja,Standard,80,27500,1320.2,descartado,2026-10-16,2026-10-17,2026-10-26,16,3.39,3.91,Descartado por calidad: se ignora
+L-2612-005,B09,Rosas,Vendela,Rosado,Standard,80,30000,1299.4,en_cultivo,2026-12-25,2026-12-27,2027-01-16,12,3.55,4.25,
+L-2612-002,B01,Rosas,Vendela,Naranja,Select,80,18500,847.9,en_cultivo,2026-12-25,2026-12-28,2027-01-04,14,4.31,5.65,
+L-2701-903,B11,Rosas,Explorer,Blanco,Premium,50,26000,1158.6,en_cultivo,2027-01-20,2027-01-22,2027-02-04,15,3.79,11.37,Precio mínimo muy alto
+L-2702-004,B11,Rosas,Playa Blanca,Bicolor,Standard,50,8500,359.4,en_cultivo,2027-02-09,2027-02-10,2027-02-24,16,4.14,5.79,
+L-2704-003,B02,Flores de verano,Hypericum,Amarillo,Premium,80,5000,170.6,en_cultivo,2027-04-18,2027-04-19,2027-05-03,10,2.54,3.06,
+L-2705-001,B08,Rosas,Pink Floyd,Blanco,Select,60,22000,1035.7,en_cultivo,2027-05-14,2027-05-15,2027-05-22,14,3.77,5.39,
+L-2706-006,B10,Flores de verano,Limonium,Bicolor,Select,80,4000,150.8,en_cultivo,2027-06-22,2027-06-25,2027-07-03,10,2.84,3.84,
+L-2711-904,B05,Gypsophila,Million Stars,Rojo,Select,70,7500,221.2,en_cultivo,2027-11-05,2027-11-06,2027-11-26,12,3.47,4.66,Fuera del horizonte pronosticado
