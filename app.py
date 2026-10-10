@@ -13,7 +13,7 @@ def create_app(config_class=Config):
     init_db(app)
     api = init_swagger(app)
     init_global_exceptions(app)
-    register_blueprints(api)
+    register_blueprints(api, app.config["API_PREFIX"])
 
     return app
 

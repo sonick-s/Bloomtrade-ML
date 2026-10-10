@@ -4,7 +4,7 @@ from flask_smorest import Blueprint
 from services import health_service
 from views.health_schema import HealthSchema
 
-blp = Blueprint("health", __name__, url_prefix="/api/health", description="Verificación del servidor y la base de datos")
+blp = Blueprint("health", __name__, url_prefix="/health", description="Verificación del servidor y la base de datos")
 
 
 @blp.route("/")
