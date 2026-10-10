@@ -12,7 +12,7 @@ Calibración:
 - Precio promedio anual por kg igual al costo promedio por tonelada del BCE.
 
 Uso:
-    python scripts/generate_ecuador_exports.py [--rows 10000] [--seed 42] [--out data/exportaciones_ecuador_flores.csv]
+    python scripts/generate_ecuador_exports.py [--rows 10000] [--seed 42] [--out docs/exportaciones_ecuador_flores.csv]
 """
 import argparse
 import csv
@@ -254,7 +254,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--rows", type=int, default=10000)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--out", default=str(Path(__file__).resolve().parent.parent / "data" / "exportaciones_ecuador_flores.csv"))
+    parser.add_argument("--out", default=str(Path(__file__).resolve().parent.parent / "docs" / "exportaciones_ecuador_flores.csv"))
     args = parser.parse_args()
 
     records = generate(args.rows, args.seed)

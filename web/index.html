@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bloomtrade ML</title>
+
+  <!-- Tailwind CSS (CDN). Todos los estilos se gestionan desde este archivo. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style type="text/tailwindcss">
+    /* Paleta y fuente: cambiar aquí actualiza toda la interfaz */
+    @theme {
+      --color-brand-50: #fff1f3;
+      --color-brand-100: #ffe0e5;
+      --color-brand-500: #e11d48;
+      --color-brand-600: #be123c;
+      --color-brand-700: #9f1239;
+      --color-leaf-500: #059669;
+      --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    /* Componentes reutilizables */
+    @layer components {
+      .card { @apply bg-white border border-slate-200 rounded-2xl p-5 shadow-sm; }
+      .card-title { @apply font-semibold mb-3; }
+      .kpi-label { @apply text-xs text-slate-500; }
+      .kpi-value { @apply text-2xl font-bold mt-1 tabular-nums; }
+
+      .nav-link { @apply px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100; }
+      .nav-link--active { @apply bg-brand-50 text-brand-600 font-medium; }
+
+      .status-pill { @apply text-xs px-2.5 py-1 rounded-full font-medium; }
+      .status-pill--loading { @apply bg-slate-100 text-slate-500; }
+      .status-pill--ok { @apply bg-emerald-100 text-emerald-700; }
+      .status-pill--warn { @apply bg-amber-100 text-amber-700; }
+      .status-pill--error { @apply bg-rose-100 text-rose-700; }
+
+      .dropzone {
+        @apply flex flex-col items-center gap-2 py-10 px-4 border-2 border-dashed border-slate-300
+               rounded-2xl text-center cursor-pointer transition-colors
+               hover:border-brand-500 hover:bg-brand-50;
+      }
+      .dropzone--over { @apply border-brand-500 bg-brand-50; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-lg bg-brand-500 text-white grid place-items-center font-bold">B</span>
+        <span class="font-semibold text-lg">Bloomtrade <span class="text-brand-500">ML</span></span>
+      </a>
+      <nav class="flex items-center gap-1 text-sm">
+        <a href="/" class="nav-link nav-link--active">Dashboard</a>
+        <a href="/api/v1/docs" target="_blank" class="nav-link">API</a>
+        <span id="api-status" class="ml-3 status-pill status-pill--loading">API…</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <section class="mb-8">
+      <h1 class="text-2xl font-bold">Inteligencia de mercado florícola</h1>
+      <p class="text-slate-500 mt-1">Carga un CSV de exportaciones para explorar volumen, destinos y temporadas.</p>
+    </section>
+
+    <!-- Carga del archivo -->
+    <section class="card mb-8">
+      <label for="csv-input" id="dropzone" class="dropzone">
+        <svg class="w-10 h-10 text-brand-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+        </svg>
+        <span class="font-medium">Arrastra tu CSV aquí o haz clic para elegirlo</span>
+        <span class="text-sm text-slate-500">Columnas: Fecha_Despacho, Tipo_Flor, Pais_Destino, Volumen_Kg, Valor_FOB_USD</span>
+        <input id="csv-input" type="file" accept=".csv" class="hidden">
+      </label>
+      <p id="file-info" class="text-sm text-slate-500 mt-3 hidden"></p>
+      <p id="file-error" class="text-sm text-brand-600 mt-3 hidden"></p>
+    </section>
+
+    <!-- Resultados -->
+    <section id="results" class="hidden">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="card"><p class="kpi-label">Registros</p><p id="kpi-rows" class="kpi-value">–</p></div>
+        <div class="card"><p class="kpi-label">Volumen total</p><p id="kpi-kg" class="kpi-value">–</p></div>
+        <div class="card"><p class="kpi-label">Valor FOB</p><p id="kpi-fob" class="kpi-value">–</p></div>
+        <div class="card"><p class="kpi-label">Precio promedio / kg</p><p id="kpi-price" class="kpi-value">–</p></div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-4 mb-8">
+        <div class="card lg:col-span-2">
+          <h2 class="card-title">Volumen mensual (kg)</h2>
+          <div id="chart-monthly" class="h-80"></div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Participación por flor</h2>
+          <div id="chart-flowers" class="h-80"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Top destinos por valor FOB</h2>
+        <div id="chart-countries" class="h-96"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.2/plotly.min.js"></script>
+  <script src="{{ url_for('web.static', filename='api.js') }}"></script>
+  <script src="{{ url_for('web.static', filename='dashboard.js') }}"></script>
+</body>
+</html>

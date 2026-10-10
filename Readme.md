@@ -24,4 +24,20 @@ source venv/Scripts/activate
 python app.py
 ```
 
-Documentación Swagger: http://127.0.0.1:5000/api/v1/docs
+## 3. Rutas del proyecto
+
+| Ruta | Qué muestra |
+|---|---|
+| http://127.0.0.1:5000/ | Frontend (dashboard) |
+| http://127.0.0.1:5000/api/v1/docs | Documentación Swagger de la API |
+
+El frontend vive en la carpeta `web/`, separado de la API:
+
+```
+web/
+├── routes.py          # rutas de las páginas HTML
+├── index.html         # página principal (Tailwind por CDN y estilos incluidos)
+└── pages/
+    ├── components/    # piezas reutilizables (navbar, footer)
+    └── js/            # lógica de la página y llamadas a la API
+```
