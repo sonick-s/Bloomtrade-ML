@@ -1,6 +1,8 @@
 Flask==3.0.3
 Flask-SQLAlchemy==3.1.1
-flask-smorest>=0.42.0
+SQLAlchemy==2.1.4
+flask-smorest==0.47.0
+marshmallow==4.3.1
 Flask-Cors==4.0.1
 python-dotenv==1.0.1
 gunicorn==22.0.0
